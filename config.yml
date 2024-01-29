@@ -1,0 +1,5 @@
+prefix: "&8[&bSh&fop&8] &r"
+
+debug: true
+save-auto:
+  enable: true

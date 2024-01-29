@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>fr.frozenia.shop</groupId>
+	<artifactId>Shop</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	
+	<properties>
+		<encoding>UTF-8</encoding>
+		<project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
+		<project.resources.sourceEncoding>${encoding}</project.resources.sourceEncoding>
+		<archetype.encoding>${encoding}</archetype.encoding>
+	</properties>
+	
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>./</directory>
+				<includes>
+					<include>InventoryRoot.yml</include>
+					<include>Menus/*.yml</include>
+					<include>config.yml</include>
+					<include>plugin.yml</include>
+				</includes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<release>8</release>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<!-- https://mvnrepository.com/artifact/org.spigotmc/spigot-1.7.10 -->
+	<repositories>
+		<repository>
+            <id>bukkit-repo</id>
+            <url>https://github.com/Bukkit/CraftBukkit</url>
+        </repository>
+		<repository>
+			<id>Herocraft</id>
+			<url>http://nexus.hc.to/content/repositories/pub_releases/</url>
+		</repository>
+	</repositories>
+	
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/com.github.azbh111/craftbukkit-1.7.10 -->
+		<dependency>
+		    <groupId>com.github.azbh111</groupId>
+		    <artifactId>craftbukkit-1.7.10</artifactId>
+		    <version>R</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/net.milkbowl.vault/Vault -->
+		<dependency>
+		    <groupId>net.milkbowl.vault</groupId>
+		    <artifactId>Vault</artifactId>
+		    <version>1.4.1</version>
+		    <scope>provided</scope>
+		</dependency>
+
+
+	</dependencies>
+</project>

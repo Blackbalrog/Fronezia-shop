@@ -1,0 +1,24 @@
+title: "Boutique"
+size: 54
+
+Items:
+
+  #Exemple:
+    #material: ANANAS
+    #name: "§dFruit"
+    #nbt: 0
+    #lore:
+      #- "Courgette"
+    #slot: 0
+    #actived: false
+
+  Block:
+    material: GRASS
+    name: "§aBlock"
+    slot: 0
+    actived: true
+  Loot:
+    material: BONE
+    name: "§bLoot"
+    slot: 1
+    actived: false

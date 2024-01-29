@@ -1,0 +1,10 @@
+version: 0.1
+name: Shop
+main: fr.frozenia.shop.Shop
+author: [Tonton_Black]
+description: plugin shop
+depend: [Vault]
+
+commands:
+  shop:
+    description: commande qui permet d ouvrir le shop

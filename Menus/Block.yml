@@ -1,0 +1,25 @@
+size: 54
+
+Items:
+
+  terre:
+    material: GRASS
+    name: "&aBlock d'herbe"
+    slot: 0
+    buy: 50.0
+    sell: 1.0
+    dynamique:
+      actived: true
+      max_prix: 5000
+      min_prix: 1
+
+  cobblestone:
+    material: COBBLESTONE
+    name: "&fPierre"
+    slot: 1
+    buy: 25.0
+    sell: 1.0
+    dynamique:
+      actived: false
+      max_prix: 5000
+      min_prix: 10
