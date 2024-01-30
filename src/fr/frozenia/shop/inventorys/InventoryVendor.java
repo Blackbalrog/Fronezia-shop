@@ -22,6 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import fr.frozenia.shop.Shop;
 import fr.frozenia.shop.data.SaveData;
 import fr.frozenia.shop.managers.InventoryManager;
+import fr.frozenia.shop.managers.PlayerManager;
 import fr.frozenia.shop.utils.Calcul;
 import fr.frozenia.shop.utils.Utils;
 import net.milkbowl.vault.economy.Economy;
@@ -40,8 +41,10 @@ public class InventoryVendor implements Listener
 		instance = main;
 	}
 
-	public void openInventory(Player player, ItemStack clickedItem, String file_menu, String key)
+	public void openInventory(Player player, ItemStack clickedItem, String file_menu)
 	{
+		KEY = PlayerManager.getInstance().getKey();
+		
 		SaveData saveData = new SaveData(instance);
 		saveData.createData();
 		
@@ -50,9 +53,6 @@ public class InventoryVendor implements Listener
 
 		FILE_MENU = file_menu;
 		itemRegistered = clickedItem;
-		//this.KEY = key;
-
-		this.setKey(key);
 		
 		File fileData = new File(instance.getDataFolder(), "Data/itemData.dat");
 		FileConfiguration data = YamlConfiguration.loadConfiguration(fileData);
@@ -62,8 +62,8 @@ public class InventoryVendor implements Listener
 		ItemMeta itemMeta = clickedItem.getItemMeta();
 		itemMeta.setDisplayName(clickedItem.getItemMeta().getDisplayName());
 
-		double buy = calculTotalPrix(configuration, data, key, ".buy");
-		double sell = calculTotalPrix(configuration, data, key, ".sell");
+		double buy = calculTotalPrix(configuration, data, KEY, ".buy");
+		double sell = calculTotalPrix(configuration, data, KEY, ".sell");
 		
 		itemMeta.setLore(Arrays.asList(new String[] { "§7nombre: §6" + nombreItem, "", "§7Achat: §6" + buy + "$", "§7Vente: §6" + sell + "$" }));
 	
@@ -154,7 +154,7 @@ public class InventoryVendor implements Listener
 								return;
 							}
 
-							double calculTotalPrix = calculTotalPrix(configuration, data, this.getKey(), ".buy") * nombreItem;
+							double calculTotalPrix = calculTotalPrix(configuration, data, KEY, ".buy") * nombreItem;
 							
 							if (economy.getBalance(player) < calculTotalPrix || economy.getBalance(player) == 0)
 						    {
@@ -166,11 +166,11 @@ public class InventoryVendor implements Listener
 						    player.getInventory().addItem(new ItemStack(itemRegistered.getType(), nombreItem));
 						    player.sendMessage(Shop.prefix + "§7Vous avez acheter §bx" + nombreItem + " " + itemRegistered.getItemMeta().getDisplayName() + " §7> §b" + calculTotalPrix + "$");
 							
-						    if (this.getKey() == null) return;
+						    if (KEY == null) return;
 							/* Save Data */
-							data.set(this.getKey() + ".today", data.getInt(this.getKey() + ".today") + nombreItem);
+							data.set(KEY + ".today", data.getInt(KEY + ".today") + nombreItem);
 							
-							System.out.println(this.getKey());
+							System.out.println(KEY);
 							
 							try
 							{
@@ -193,15 +193,15 @@ public class InventoryVendor implements Listener
 								return;
 							}
 							
-							double calculTotalPrix = calculTotalPrix(configuration, data, this.getKey(), ".sell") * nombreItem;
+							double calculTotalPrix = calculTotalPrix(configuration, data, KEY, ".sell") * nombreItem;
 
 							economy.depositPlayer(player, calculTotalPrix);
 							player.getInventory().removeItem(new ItemStack(itemRegistered.getType(), nombreItem));
 							player.sendMessage(Shop.prefix + "§7Vous avez vendu §bx" + nombreItem + " " + itemRegistered.getItemMeta().getDisplayName() + " §7> §b" + calculTotalPrix + "$");
 							
-							if (this.getKey() == null) return;
+							if (KEY == null) return;
 							/* Save Data */
-							data.set(this.getKey() + ".today", data.getInt(this.getKey() + ".today") + nombreItem);
+							data.set(KEY + ".today", data.getInt(KEY + ".today") + nombreItem);
 							
 							try
 							{
@@ -226,15 +226,15 @@ public class InventoryVendor implements Listener
 									return;
 								}
 								
-								double calculTotalPrix = calculTotalPrix(configuration, data, this.getKey(), ".sell") * nombreItem;
+								double calculTotalPrix = calculTotalPrix(configuration, data, KEY, ".sell") * nombreItem;
 
 								economy.depositPlayer(player, calculTotalPrix);
 								player.getInventory().removeItem(new ItemStack(itemRegistered.getType(), totalQuantity));
 								player.sendMessage(Shop.prefix + "§7Vous avez vendu §bx" + totalQuantity + " " + itemRegistered.getItemMeta().getDisplayName() + " §7> §b" + calculTotalPrix + "$");
 								
-								if (this.getKey() == null) return;
+								if (KEY == null) return;
 								/* Save Data */
-								data.set(this.getKey() + ".today", data.getInt(this.getKey() + ".today") + totalQuantity);
+								data.set(KEY + ".today", data.getInt(KEY + ".today") + totalQuantity);
 								
 								try
 								{
@@ -252,7 +252,7 @@ public class InventoryVendor implements Listener
 					break;
 
 				case 45:
-					InventoryManager inventoryManager = new InventoryManager(instance, Shop.getPlayerManager().getMenuPrevious(player));
+					InventoryManager inventoryManager = new InventoryManager(instance, PlayerManager.getInstance().getMenuPrevious());
 					inventoryManager.openInventory(player);
 					break;
 			}
@@ -261,8 +261,8 @@ public class InventoryVendor implements Listener
 			if (meta == null) return;
 			meta.setDisplayName(itemRegistered.getItemMeta().getDisplayName());
 			
-			double buy = calculTotalPrix(configuration, data, this.getKey(), ".buy");
-			double sell = calculTotalPrix(configuration, data, this.getKey(), ".sell");
+			double buy = calculTotalPrix(configuration, data, KEY, ".buy");
+			double sell = calculTotalPrix(configuration, data, KEY, ".sell");
 
 			meta.setLore(Arrays.asList(new String[] { "§7nombre: §6" + nombreItem, "", "§7Achat: §6" + (buy * nombreItem) + "$", "§7Vente: §6" + (sell * nombreItem) + "$" }));
 			
@@ -299,15 +299,5 @@ public class InventoryVendor implements Listener
 		{
 			return section.getDouble(key + vendor) * nombreItem;
 		}
-	}
-	
-	private void setKey(String key)
-	{
-		this.KEY = key;
-	}
-	
-	private String getKey()
-	{
-		return this.KEY;
 	}
 }

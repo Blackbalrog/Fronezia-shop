@@ -28,12 +28,9 @@ public class InventoryManager implements Listener
 
 	private Inventory inventaire;
 	private ConfigurationManager configurationManager;
-	
 	private Shop instance;
-	
 	private String file_menu;
-	
-	
+	private PlayerManager playerManager;
 	
 	public InventoryManager(Shop main, String file_name)
 	{
@@ -59,7 +56,8 @@ public class InventoryManager implements Listener
 		if (configurationManager.getFileName().startsWith("Menus/"))
 		{
 			this.inventaire.setItem(45, new Utils().Retour());
-			Shop.getPlayerManager().players.put(player, "Menus/" + title + ".yml");
+			this.playerManager = new PlayerManager(player);
+			this.playerManager.setMenuPrevious(title);
 		}
 		
 		ConfigurationSection section = this.configurationManager.getConfigurationSection("Items");
@@ -167,6 +165,8 @@ public class InventoryManager implements Listener
 				map_Items.put(sectionItem.getInt(key + ".slot"), key);
 			}
 			
+			PlayerManager.getInstance().setKey(map_Items.get(event.getSlot()));
+			
 			if (event.getSlot() == 45)
 			{
 				inventoryManager = new InventoryManager(this.instance, "InventoryRoot.yml");
@@ -175,10 +175,10 @@ public class InventoryManager implements Listener
 			
 			if (map_Items.get(event.getSlot()) == null) return;
 			
+			PlayerManager.getInstance().setKey(map_Items.get(event.getSlot()));
+			
 			InventoryVendor vendor = new InventoryVendor(instance);
-			vendor.openInventory(player, clickedItem, this.file_menu, map_Items.get(event.getSlot()));
-			
-			
+			vendor.openInventory(player, clickedItem, this.file_menu/*, map_Items.get(event.getSlot())*/);
 		}
 	}
 }

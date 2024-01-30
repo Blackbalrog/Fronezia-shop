@@ -10,14 +10,11 @@ import fr.frozenia.shop.configurtation.ConfigurationManager;
 import fr.frozenia.shop.data.SaveData;
 import fr.frozenia.shop.inventorys.InventoryVendor;
 import fr.frozenia.shop.managers.InventoryManager;
-import fr.frozenia.shop.managers.PlayerManager;
 import net.milkbowl.vault.economy.Economy;
 
 public class Shop extends JavaPlugin
 {
 	public static String prefix;
-	private static PlayerManager playerManager;
-
 	private static Economy economy = null;
 
 	@Override
@@ -32,8 +29,6 @@ public class Shop extends JavaPlugin
 			return;
 		}
 		
-		playerManager = new PlayerManager();
-
 		onListeners();
 		onCommands();
 		
@@ -63,11 +58,6 @@ public class Shop extends JavaPlugin
 		pluginManager.registerEvents(new InventoryVendor(this), this);
 	}
 
-	public static PlayerManager getPlayerManager()
-	{
-		return playerManager;
-	}
-
 	private boolean setupEconomy()
 	{
 		if (getServer().getPluginManager().getPlugin("Vault") == null)
@@ -89,5 +79,5 @@ public class Shop extends JavaPlugin
 	{
 		return economy;
 	}
-
+	
 }
