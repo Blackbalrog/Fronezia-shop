@@ -1,7 +1,6 @@
 package fr.frozenia.shop.inventorys;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -36,10 +35,13 @@ public class InventoryVendor implements Listener
 	private static int nombreItem = 1;
 	//update price
 	private volatile String KEY;
+	private Configuration data;
+	
 	
 	public InventoryVendor(Shop main)
 	{
 		instance = main;
+		data = new Configuration(new File(instance.getDataFolder(), "Data/itemData.dat"));
 	}
 
 	public void openInventory(Player player, ItemStack clickedItem)
@@ -54,8 +56,6 @@ public class InventoryVendor implements Listener
 
 		itemRegistered = clickedItem;
 
-		Configuration data = new Configuration(new File(instance.getDataFolder(), "Data/itemData.dat"));
-		
 		Inventory inventaire = Bukkit.createInventory(null, 54, "Vendeur");
 
 		ItemMeta itemMeta = clickedItem.getItemMeta();
@@ -90,12 +90,6 @@ public class InventoryVendor implements Listener
 		File file = new File(instance.getDataFolder(), "Menus/" + PlayerManager.getInstance().getMenu() + ".yml");
 		if (!file.exists()) return;
 		FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-		
-		File fileData = new File(instance.getDataFolder(), "Data/itemData.dat");
-		FileConfiguration data = YamlConfiguration.loadConfiguration(fileData);
-		
-		
-		//Configuration data = new Configuration(new File(instance.getDataFolder(), "Data/itemData.dat"));
 		
 		if (event.getView().getTitle().equals("Vendeur"))
 		{
@@ -172,16 +166,7 @@ public class InventoryVendor implements Listener
 						    if (KEY == null) return;
 							/* Save Data */
 							data.set(KEY + ".today", data.getInt(KEY + ".today") + nombreItem);
-							//data.saveFile();
-							
-							try
-							{
-								data.save(fileData);
-							}
-							catch (IOException exeption)
-							{
-								exeption.printStackTrace();
-							}
+							data.saveFile();
 							
 						}
 						else if (event.getClick() == ClickType.RIGHT)
@@ -204,17 +189,7 @@ public class InventoryVendor implements Listener
 							if (KEY == null) return;
 							/* Save Data */
 							data.set(KEY + ".today", data.getInt(KEY + ".today") + nombreItem);
-							//data.saveFile();
-							/*
-							try
-							{
-								data.save(fileData);
-							}
-							catch (IOException exeption)
-							{
-								exeption.printStackTrace();
-							}
-							*/
+							data.saveFile();
 						}
 						
 						if (event.isShiftClick())
@@ -239,17 +214,7 @@ public class InventoryVendor implements Listener
 								if (KEY == null) return;
 								/* Save Data */
 								data.set(KEY + ".today", data.getInt(KEY + ".today") + totalQuantity);
-								//data.saveFile();
-								/*
-								try
-								{
-									data.save(fileData);
-								}
-								catch (IOException exeption)
-								{
-									exeption.printStackTrace();
-								}
-								*/
+								data.saveFile();
 								return;
 							}
 							player.sendMessage(Shop.prefix + "§7Tu n'as pas la permission");
