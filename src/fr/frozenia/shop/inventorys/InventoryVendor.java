@@ -2,6 +2,7 @@ package fr.frozenia.shop.inventorys;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -282,7 +283,11 @@ public class InventoryVendor implements Listener
 		double max_prix = section.getDouble(key + ".dynamique.max_prix");
 		double min_prix = section.getDouble(key + ".dynamique.min_prix");
 		
-		return Calcul.setNewPrix(section.getDouble(key + vendor) * nombreItem, data.getInt(key + ".today"), data.getInt(key + ".before"), min_prix, max_prix);
+		double value = Calcul.setNewPrix(section.getDouble(key + vendor) * nombreItem, data.getInt(key + ".today"), data.getInt(key + ".before"), min_prix, max_prix);
+		
+		DecimalFormat decimalFormat = new DecimalFormat("##.##");
+	    String formattedValue = decimalFormat.format(value);
+	    return Double.parseDouble(formattedValue);
 	}
 	
 	@EventHandler
