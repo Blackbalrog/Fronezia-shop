@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import fr.frozenia.shop.Shop;
+import fr.frozenia.shop.configurtation.Configuration;
 import fr.frozenia.shop.data.SaveData;
 import fr.frozenia.shop.managers.InventoryManager;
 import fr.frozenia.shop.managers.PlayerManager;
@@ -51,11 +52,9 @@ public class InventoryVendor implements Listener
 		File file = new File(instance.getDataFolder(), "Menus/" + PlayerManager.getInstance().getMenu() + ".yml");
 		FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
 
-		//FILE_MENU = file_menu;
 		itemRegistered = clickedItem;
-		
-		File fileData = new File(instance.getDataFolder(), "Data/itemData.dat");
-		FileConfiguration data = YamlConfiguration.loadConfiguration(fileData);
+
+		Configuration data = new Configuration(new File(instance.getDataFolder(), "Data/itemData.dat"));
 		
 		Inventory inventaire = Bukkit.createInventory(null, 54, "Vendeur");
 
@@ -91,9 +90,12 @@ public class InventoryVendor implements Listener
 		File file = new File(instance.getDataFolder(), "Menus/" + PlayerManager.getInstance().getMenu() + ".yml");
 		if (!file.exists()) return;
 		FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-
+		
 		File fileData = new File(instance.getDataFolder(), "Data/itemData.dat");
 		FileConfiguration data = YamlConfiguration.loadConfiguration(fileData);
+		
+		
+		//Configuration data = new Configuration(new File(instance.getDataFolder(), "Data/itemData.dat"));
 		
 		if (event.getView().getTitle().equals("Vendeur"))
 		{
@@ -170,6 +172,7 @@ public class InventoryVendor implements Listener
 						    if (KEY == null) return;
 							/* Save Data */
 							data.set(KEY + ".today", data.getInt(KEY + ".today") + nombreItem);
+							//data.saveFile();
 							
 							try
 							{
@@ -201,7 +204,8 @@ public class InventoryVendor implements Listener
 							if (KEY == null) return;
 							/* Save Data */
 							data.set(KEY + ".today", data.getInt(KEY + ".today") + nombreItem);
-							
+							//data.saveFile();
+							/*
 							try
 							{
 								data.save(fileData);
@@ -210,6 +214,7 @@ public class InventoryVendor implements Listener
 							{
 								exeption.printStackTrace();
 							}
+							*/
 						}
 						
 						if (event.isShiftClick())
@@ -234,7 +239,8 @@ public class InventoryVendor implements Listener
 								if (KEY == null) return;
 								/* Save Data */
 								data.set(KEY + ".today", data.getInt(KEY + ".today") + totalQuantity);
-								
+								//data.saveFile();
+								/*
 								try
 								{
 									data.save(fileData);
@@ -243,6 +249,7 @@ public class InventoryVendor implements Listener
 								{
 									exeption.printStackTrace();
 								}
+								*/
 								return;
 							}
 							player.sendMessage(Shop.prefix + "§7Tu n'as pas la permission");
@@ -259,6 +266,8 @@ public class InventoryVendor implements Listener
 			ItemMeta meta = clickedItem.getItemMeta();
 			if (meta == null) return;
 			meta.setDisplayName(itemRegistered.getItemMeta().getDisplayName());
+			
+			KEY = PlayerManager.getInstance().getKey();
 			
 			double buy = calculTotalPrix(configuration, data, KEY, ".buy");
 			double sell = calculTotalPrix(configuration, data, KEY, ".sell");
