@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -29,7 +30,6 @@ public class InventoryManager implements Listener
 	private Inventory inventaire;
 	private ConfigurationManager configurationManager;
 	private Shop instance;
-	private String file_menu;
 	private PlayerManager playerManager;
 	
 	public InventoryManager(Shop main, String file_name)
@@ -37,13 +37,7 @@ public class InventoryManager implements Listener
 		this.instance = main;
 		this.configurationManager = new ConfigurationManager(main, file_name);
 	}
-	
-	public InventoryManager getInventoryFile(String file_name)
-	{
-		this.configurationManager = new ConfigurationManager(this.instance, file_name);
-		return this;
-	}
-	
+
 	public void openInventory(Player player)
 	{
 		String title = this.configurationManager.getString("title");
@@ -56,8 +50,10 @@ public class InventoryManager implements Listener
 		if (configurationManager.getFileName().startsWith("Menus/"))
 		{
 			this.inventaire.setItem(45, new Utils().Retour());
+			
 			this.playerManager = new PlayerManager(player);
 			this.playerManager.setMenuPrevious(title);
+			this.playerManager.setMenu(title);
 		}
 		
 		ConfigurationSection section = this.configurationManager.getConfigurationSection("Items");
@@ -137,35 +133,33 @@ public class InventoryManager implements Listener
 				map_menus.put(section.getInt(key + ".slot"), key);
 			}
 			
-			this.file_menu = map_menus.get(event.getSlot());
-			
 			if (map_menus != null && section.getBoolean(map_menus.get(event.getSlot()) + ".actived") == true)
 			{
 				inventoryManager = new InventoryManager(this.instance, "Menus/" + map_menus.get(event.getSlot()) + ".yml");
 				inventoryManager.openInventory(player);
 				return;
 			}
+			
 			if (map_menus.get(event.getSlot()) == null) return;
 			
+			PlayerManager.getInstance().setMenu(map_menus.get(event.getSlot()));
+			
 			player.sendMessage(Shop.prefix + "§7Le shop §b" + map_menus.get(event.getSlot()) + " §7est désactiver");
-
 		}
 		
-		else if (event.getView().getTitle().equals(this.file_menu))
+		else if (event.getView().getTitle().equals(PlayerManager.getInstance().getMenu()))
 		{
 			event.setCancelled(true);
 			if (event.getInventory() == null || clickedItem == null) return;
 			
 			Player player = (Player) event.getWhoClicked();
 			
-			ConfigurationManager configurationItem = new ConfigurationManager(instance, "Menus/" + this.file_menu + ".yml");
+			ConfigurationManager configurationItem = new ConfigurationManager(instance, "Menus/" + PlayerManager.getInstance().getMenu() + ".yml");
 			ConfigurationSection sectionItem = configurationItem.getConfigurationSection("Items");
 			for (String key : sectionItem.getKeys(false))
 			{
 				map_Items.put(sectionItem.getInt(key + ".slot"), key);
 			}
-			
-			PlayerManager.getInstance().setKey(map_Items.get(event.getSlot()));
 			
 			if (event.getSlot() == 45)
 			{
@@ -178,7 +172,16 @@ public class InventoryManager implements Listener
 			PlayerManager.getInstance().setKey(map_Items.get(event.getSlot()));
 			
 			InventoryVendor vendor = new InventoryVendor(instance);
-			vendor.openInventory(player, clickedItem, this.file_menu/*, map_Items.get(event.getSlot())*/);
+			vendor.openInventory(player, clickedItem);
+		}
+	}
+	
+	@EventHandler
+	public void onCloseInventory(InventoryCloseEvent event)
+	{
+		if (event.getView().getTitle().equals(PlayerManager.getInstance().getMenuPrevious()))
+		{
+			PlayerManager.getInstance().clearInventoryPrevious();
 		}
 	}
 }

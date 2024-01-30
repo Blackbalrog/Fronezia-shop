@@ -31,27 +31,27 @@ public class InventoryVendor implements Listener
 {
 
 	private static Shop instance;
-	private static String FILE_MENU;
 	private static ItemStack itemRegistered;
 	private static int nombreItem = 1;
-	private String KEY;
+	//update price
+	private volatile String KEY;
 	
 	public InventoryVendor(Shop main)
 	{
 		instance = main;
 	}
 
-	public void openInventory(Player player, ItemStack clickedItem, String file_menu)
+	public void openInventory(Player player, ItemStack clickedItem)
 	{
 		KEY = PlayerManager.getInstance().getKey();
 		
 		SaveData saveData = new SaveData(instance);
 		saveData.createData();
 		
-		File file = new File(instance.getDataFolder(), "Menus/" + file_menu + ".yml");
+		File file = new File(instance.getDataFolder(), "Menus/" + PlayerManager.getInstance().getMenu() + ".yml");
 		FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
 
-		FILE_MENU = file_menu;
+		//FILE_MENU = file_menu;
 		itemRegistered = clickedItem;
 		
 		File fileData = new File(instance.getDataFolder(), "Data/itemData.dat");
@@ -88,7 +88,7 @@ public class InventoryVendor implements Listener
 	{
 		Player player = (Player) event.getWhoClicked();
 
-		File file = new File(instance.getDataFolder(), "Menus/" + FILE_MENU + ".yml");
+		File file = new File(instance.getDataFolder(), "Menus/" + PlayerManager.getInstance().getMenu() + ".yml");
 		if (!file.exists()) return;
 		FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
 
@@ -100,6 +100,7 @@ public class InventoryVendor implements Listener
 			ItemStack clickedItem = event.getCurrentItem();
 			event.setCancelled(true);
 			if (event.getInventory() == null || clickedItem == null) return;
+			
 			switch (event.getSlot())
 			{
 				case 28:
@@ -169,8 +170,6 @@ public class InventoryVendor implements Listener
 						    if (KEY == null) return;
 							/* Save Data */
 							data.set(KEY + ".today", data.getInt(KEY + ".today") + nombreItem);
-							
-							System.out.println(KEY);
 							
 							try
 							{
@@ -271,15 +270,6 @@ public class InventoryVendor implements Listener
 		}
 	}
 
-	@EventHandler
-	public void onCloseInventory(InventoryCloseEvent event)
-	{
-		if (event.getView().getTitle().equals("Vendeur"))
-		{
-			nombreItem = 1;
-		}
-	}
-
 	public boolean isInventoryFull(Player player)
 	{
 		return player.getInventory().firstEmpty() == -1 ? true : false;
@@ -291,13 +281,17 @@ public class InventoryVendor implements Listener
 		double max_prix = section.getDouble(key + ".dynamique.max_prix");
 		double min_prix = section.getDouble(key + ".dynamique.min_prix");
 		
-		if (section.contains(key + ".dynamique") && section.getBoolean(key + ".dynamique.actived") == true)
+		return section.getBoolean(key + ".dynamique.actived") == true ? 
+				Calcul.setNewPrix(section.getDouble(key + vendor) * nombreItem, data.getInt(key + ".today"), data.getInt(key + ".before"), min_prix, max_prix) : 
+					(section.getDouble(key + vendor) * nombreItem);
+	}
+	
+	@EventHandler
+	public void onCloseInventory(InventoryCloseEvent event)
+	{
+		if (event.getView().getTitle().equals("Vendeur"))
 		{
-			return Calcul.setNewPrix(section.getDouble(key + vendor) * nombreItem, data.getInt(key + ".today"), data.getInt(key + ".before"), min_prix, max_prix);
-		}
-		else
-		{
-			return section.getDouble(key + vendor) * nombreItem;
+			nombreItem = 1;
 		}
 	}
 }

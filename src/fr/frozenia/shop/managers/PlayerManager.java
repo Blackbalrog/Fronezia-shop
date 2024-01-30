@@ -12,11 +12,22 @@ public class PlayerManager
 	
 	private static Player PLAYER;
 	private String key;
+	private String menu;
 	
 	public PlayerManager(Player player)
 	{
 		if (!manager.containsKey(player)) manager.put(player, this);
 		PLAYER = player;
+	}
+	
+	public void setMenu(String menu)
+	{
+		this.menu = menu;
+	}
+	
+	public String getMenu()
+	{
+		return this.menu;
 	}
 	
 	public void setMenuPrevious(String menu)
@@ -37,6 +48,16 @@ public class PlayerManager
 	public String getKey()
 	{
 		return this.key;
+	}
+	
+	public void clearManager()
+	{
+		PlayerManager.manager.remove(PLAYER);
+	}
+	
+	public void clearInventoryPrevious()
+	{
+		this.inventorys.remove(PLAYER);
 	}
 	
 	public static PlayerManager getInstance()
