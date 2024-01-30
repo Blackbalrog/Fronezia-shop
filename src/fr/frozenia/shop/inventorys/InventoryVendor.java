@@ -89,13 +89,14 @@ public class InventoryVendor implements Listener
 	public void onInteractInventory(InventoryClickEvent event)
 	{
 		Player player = (Player) event.getWhoClicked();
-
-		File file = new File(instance.getDataFolder(), "Menus/" + PlayerManager.getInstance().getMenu() + ".yml");
-		if (!file.exists()) return;
-		FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
 		
 		if (event.getView().getTitle().equals("Vendeur"))
 		{
+
+			File file = new File(instance.getDataFolder(), "Menus/" + PlayerManager.getInstance().getMenu() + ".yml");
+			if (!file.exists()) return;
+			FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+			
 			ItemStack clickedItem = event.getCurrentItem();
 			event.setCancelled(true);
 			if (event.getInventory() == null || clickedItem == null) return;
@@ -223,7 +224,7 @@ public class InventoryVendor implements Listener
 									return;
 								}
 								
-								double calculTotalPrix = calculTotalPrix(configuration, data, KEY, ".sell") * nombreItem;
+								double calculTotalPrix = calculTotalPrix(configuration, data, KEY, ".sell") * totalQuantity;
 
 								economy.depositPlayer(player, calculTotalPrix);
 								player.getInventory().removeItem(new ItemStack(itemRegistered.getType(), totalQuantity));
