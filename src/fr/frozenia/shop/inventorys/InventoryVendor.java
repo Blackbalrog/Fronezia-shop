@@ -1,6 +1,7 @@
 package fr.frozenia.shop.inventorys;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -19,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import fr.frozenia.shop.Shop;
-import fr.frozenia.shop.configurtation.Configuration;
 import fr.frozenia.shop.data.SaveData;
 import fr.frozenia.shop.managers.InventoryManager;
 import fr.frozenia.shop.managers.PlayerManager;
@@ -30,25 +30,28 @@ import net.milkbowl.vault.economy.Economy;
 public class InventoryVendor implements Listener
 {
 
-	private static Shop instance;
+	private Shop instance;
 	private static ItemStack itemRegistered;
 	private static int nombreItem = 1;
 	//update price
 	private volatile String KEY;
-	private Configuration data;
+	
+	private File fileData;
+	private FileConfiguration data;
 	
 	
 	public InventoryVendor(Shop main)
 	{
-		instance = main;
-		data = new Configuration(new File(instance.getDataFolder(), "Data/itemData.dat"));
+		this.instance = main;
+		this.fileData = new File(main.getDataFolder(), "Data/itemData.dat");
+		this.data = YamlConfiguration.loadConfiguration(this.fileData);
 	}
 
 	public void openInventory(Player player, ItemStack clickedItem)
 	{
 		KEY = PlayerManager.getInstance().getKey();
 		
-		SaveData saveData = new SaveData(instance);
+		SaveData saveData = new SaveData(this.instance);
 		saveData.createData();
 		
 		File file = new File(instance.getDataFolder(), "Menus/" + PlayerManager.getInstance().getMenu() + ".yml");
@@ -164,10 +167,17 @@ public class InventoryVendor implements Listener
 						    player.sendMessage(Shop.prefix + "§7Vous avez acheter §bx" + nombreItem + " " + itemRegistered.getItemMeta().getDisplayName() + " §7> §b" + calculTotalPrix + "$");
 							
 						    if (KEY == null) return;
+						    
 							/* Save Data */
 							data.set(KEY + ".today", data.getInt(KEY + ".today") + nombreItem);
-							data.saveFile();
-							
+							try
+							{
+								data.save(fileData);
+							}
+							catch (IOException exeption)
+							{
+								exeption.printStackTrace();
+							}
 						}
 						else if (event.getClick() == ClickType.RIGHT)
 						{
@@ -187,9 +197,17 @@ public class InventoryVendor implements Listener
 							player.sendMessage(Shop.prefix + "§7Vous avez vendu §bx" + nombreItem + " " + itemRegistered.getItemMeta().getDisplayName() + " §7> §b" + calculTotalPrix + "$");
 							
 							if (KEY == null) return;
+							
 							/* Save Data */
 							data.set(KEY + ".today", data.getInt(KEY + ".today") + nombreItem);
-							data.saveFile();
+							try
+							{
+								data.save(fileData);
+							}
+							catch (IOException exeption)
+							{
+								exeption.printStackTrace();
+							}
 						}
 						
 						if (event.isShiftClick())
@@ -212,9 +230,17 @@ public class InventoryVendor implements Listener
 								player.sendMessage(Shop.prefix + "§7Vous avez vendu §bx" + totalQuantity + " " + itemRegistered.getItemMeta().getDisplayName() + " §7> §b" + calculTotalPrix + "$");
 								
 								if (KEY == null) return;
+								
 								/* Save Data */
 								data.set(KEY + ".today", data.getInt(KEY + ".today") + totalQuantity);
-								data.saveFile();
+								try
+								{
+									data.save(fileData);
+								}
+								catch (IOException exeption)
+								{
+									exeption.printStackTrace();
+								}
 								return;
 							}
 							player.sendMessage(Shop.prefix + "§7Tu n'as pas la permission");
@@ -255,9 +281,7 @@ public class InventoryVendor implements Listener
 		double max_prix = section.getDouble(key + ".dynamique.max_prix");
 		double min_prix = section.getDouble(key + ".dynamique.min_prix");
 		
-		return section.getBoolean(key + ".dynamique.actived") == true ? 
-				Calcul.setNewPrix(section.getDouble(key + vendor) * nombreItem, data.getInt(key + ".today"), data.getInt(key + ".before"), min_prix, max_prix) : 
-					(section.getDouble(key + vendor) * nombreItem);
+		return Calcul.setNewPrix(section.getDouble(key + vendor) * nombreItem, data.getInt(key + ".today"), data.getInt(key + ".before"), min_prix, max_prix);
 	}
 	
 	@EventHandler

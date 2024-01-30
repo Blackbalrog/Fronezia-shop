@@ -9,7 +9,6 @@ Items:
     buy: 50.0
     sell: 1.0
     dynamique:
-      actived: true
       max_prix: 5000
       min_prix: 1
 
@@ -20,6 +19,5 @@ Items:
     buy: 25.0
     sell: 1.0
     dynamique:
-      actived: false
-      max_prix: 5000
-      min_prix: 10
+      max_prix: 10000
+      min_prix: 1
