@@ -3,6 +3,7 @@ package fr.frozenia.shop.managers;
 import java.util.HashMap;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
 public class PlayerManager
@@ -52,14 +53,9 @@ public class PlayerManager
 		return this.key;
 	}
 	
-	public void clearManager()
+	public void clearManager(Player player)
 	{
-		PlayerManager.manager.remove(PLAYER);
-	}
-	
-	public void clearInventoryPrevious()
-	{
-		this.inventorys.remove(PLAYER);
+		PlayerManager.manager.remove(player);
 	}
 	
 	public static PlayerManager getInstance()
@@ -75,5 +71,19 @@ public class PlayerManager
 	public ConfigurationSection getSectionItem()
 	{
 		return this.sectionItem;
+	}
+
+	public void removeInventory(HumanEntity player)
+	{
+		if (player instanceof Player)
+		{
+			//Definir le menu lorsque le joueur clique sur l'item
+			
+			
+			//inventorys.remove(player);
+			//setKey(null);
+			//setMenuPrevious(null);
+			//setSectionConfiguration(null);
+		}
 	}
 }

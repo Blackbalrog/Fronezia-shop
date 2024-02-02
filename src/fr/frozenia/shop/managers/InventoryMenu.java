@@ -32,7 +32,7 @@ public class InventoryMenu implements Listener
 	private ConfigurationManager configurationManager;
 
 	private Inventory inventaire;
-	private int page = 1;
+	private int page  = 1;
 	private int pages = 0;
 	
 	private PlayerManager playerManager;
@@ -52,14 +52,15 @@ public class InventoryMenu implements Listener
 		this.inventaire = Bukkit.createInventory(null, size, title);
 
 		// Create PlayerManager
-		this.playerManager = new PlayerManager(player);
+		if (this.playerManager == null) this.playerManager = new PlayerManager(player);
 		this.playerManager.setMenuPrevious(title);
 		this.playerManager.setMenu(title);
-
+		
 		ConfigurationSection section = this.configurationManager.getConfigurationSection("Items");
 		for (String page : section.getKeys(false)) pages++;
 		
 		ConfigurationSection section_page = this.configurationManager.getConfigurationSection("Items.page_" + this.page);
+		if (section_page == null) return;
 		for (String key : section_page.getKeys(false))
 		{
 			Material material = Material.valueOf(section_page.getString(key + ".material"));
@@ -84,14 +85,19 @@ public class InventoryMenu implements Listener
 
 			if (section_page.contains(key + ".dynamique"))
 			{
-				double buy = 0D;
-				double sell = 0D;
+				double buyPrice  = section_page.getDouble(key + ".buy");
+				double sellPrice = section_page.getDouble(key + ".sell");
+				
 				double max_prix = section_page.getDouble(key + ".dynamique.max_prix");
 				double min_prix = section_page.getDouble(key + ".dynamique.min_prix");
 
-				buy = Calcul.setNewPrix(section_page.getDouble(key + ".buy"), data.getInt(key + ".today"), data.getInt(key + ".before"), min_prix, max_prix);
-				sell = Calcul.setNewPrix(section_page.getDouble(key + ".sell"), data.getInt(key + ".today"), data.getInt(key + ".before"), min_prix, max_prix);
-
+				int dataToday 		= data.getInt(key + ".Today");
+				int dataYesterday 	= data.getInt(key + ".Yesterday");
+				int dataTwoDays 	= data.getInt(key + ".TwoDays");
+				
+				double buy  = new Calcul(buyPrice, dataToday, dataYesterday, dataTwoDays, min_prix, max_prix).calculePrice();
+				double sell = new Calcul(sellPrice, dataToday, dataYesterday, dataTwoDays, min_prix, max_prix).calculePrice();
+				
 				lores = new String[] { "", "§7§nPrix dynamique:", "", "§7Achat: §6" + buy + "$", "§7Vente: §6" + sell + "$" };
 
 			}
@@ -139,13 +145,16 @@ public class InventoryMenu implements Listener
 
 			ConfigurationManager configurationItem = new ConfigurationManager(instance, "Menus/" + PlayerManager.getInstance().getMenu() + ".yml");
 			ConfigurationSection sectionItem = configurationItem.getConfigurationSection("Items.page_" + this.page);
+			if (sectionItem == null) return;
 			for (String key : sectionItem.getKeys(false))
 			{
+				if (key.equals("Page " + page)) return;
 				map_Items.put(sectionItem.getInt(key + ".slot"), key);
 			}
 
 			if (event.getSlot() == 49)
 			{
+				PlayerManager.getInstance().clearManager(player);
 				InventoryMain inventoryManager = new InventoryMain(this.instance, "InventoryRoot.yml");
 				inventoryManager.openInventory(player);
 			}
@@ -164,7 +173,7 @@ public class InventoryMenu implements Listener
 				this.openInventory(player);
 			}
 			
-			if (map_Items.get(event.getSlot()) == null || map_Items.get(event.getSlot()).equals("Page " + page)) return;
+			if (map_Items.get(event.getSlot()) == null) return;
 
 			PlayerManager.getInstance().setKey(map_Items.get(event.getSlot()));
 			PlayerManager.getInstance().setSectionConfiguration(sectionItem.getConfigurationSection(map_Items.get(event.getSlot())));

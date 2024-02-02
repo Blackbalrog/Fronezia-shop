@@ -36,7 +36,7 @@ public class InventoryVendor implements Listener
 	private static int nombreItem = 1;
 	//update price
 	private volatile String KEY;
-	private ConfigurationSection sectionItem;
+	private volatile ConfigurationSection sectionItem;
 	
 	private File fileData;
 	private FileConfiguration data;
@@ -168,7 +168,7 @@ public class InventoryVendor implements Listener
 						    if (KEY == null) return;
 						    
 							/* Save Data */
-							data.set(KEY + ".today", data.getInt(KEY + ".today") + nombreItem);
+							data.set(KEY + ".Today", data.getInt(KEY + ".Today") + nombreItem);
 							try
 							{
 								data.save(fileData);
@@ -199,7 +199,7 @@ public class InventoryVendor implements Listener
 							if (KEY == null) return;
 							
 							/* Save Data */
-							data.set(KEY + ".today", data.getInt(KEY + ".today") + nombreItem);
+							data.set(KEY + ".Today", data.getInt(KEY + ".Today") + nombreItem);
 							try
 							{
 								data.save(fileData);
@@ -233,7 +233,7 @@ public class InventoryVendor implements Listener
 								if (KEY == null) return;
 								
 								/* Save Data */
-								data.set(KEY + ".today", data.getInt(KEY + ".today") + totalQuantity);
+								data.set(KEY + ".Today", data.getInt(KEY + ".Today") + totalQuantity);
 								try
 								{
 									data.save(fileData);
@@ -250,6 +250,12 @@ public class InventoryVendor implements Listener
 					break;
 
 				case 45:
+					if (event.isShiftClick())
+					{
+						PlayerManager.getInstance().clearManager(player);
+						player.closeInventory();
+						return;
+					}
 					InventoryMenu inventoryManager = new InventoryMenu(instance, PlayerManager.getInstance().getMenuPrevious());
 					inventoryManager.openInventory(player);
 					break;
@@ -277,13 +283,19 @@ public class InventoryVendor implements Listener
 	
 	public double calculTotalPrix(String vendor)
 	{
-		KEY = PlayerManager.getInstance().getKey();
-		sectionItem = PlayerManager.getInstance().getSectionItem();
+		this.KEY = PlayerManager.getInstance().getKey();
+		this.sectionItem = PlayerManager.getInstance().getSectionItem();
 		
-		double max_prix = sectionItem.getDouble("dynamique.max_prix");
-		double min_prix = sectionItem.getDouble("dynamique.min_prix");
+		double vendorToConfig = this.sectionItem.getDouble(vendor);
 		
-		double value = Calcul.setNewPrix(sectionItem.getDouble(vendor), this.data.getInt(KEY + ".today"), this.data.getInt(KEY + ".before"), min_prix, max_prix);
+		double max_prix = this.sectionItem.getDouble("dynamique.max_prix");
+		double min_prix = this.sectionItem.getDouble("dynamique.min_prix");
+		
+		int dataToday 		= this.data.getInt(KEY + ".Today");
+		int dataYesterday 	= this.data.getInt(KEY + ".Yesterday");
+		int dataTwoDays 	= this.data.getInt(KEY + ".TwoDays");
+		
+		double value = new Calcul(vendorToConfig, dataToday, dataYesterday, dataTwoDays, min_prix, max_prix).calculePrice();
 		
 		DecimalFormat decimalFormat = new DecimalFormat("##.##");
 	    String formattedValue = decimalFormat.format(value);
@@ -296,6 +308,7 @@ public class InventoryVendor implements Listener
 		if (event.getView().getTitle().equals("Vendeur"))
 		{
 			nombreItem = 1;
+			//PlayerManager.getInstance().removeInventory(event.getPlayer());
 		}
 	}
 }

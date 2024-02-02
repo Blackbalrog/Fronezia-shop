@@ -36,8 +36,9 @@ public class SaveData
 
 				for (String key : data.getKeys(false))
 				{
-					data.set(key + ".before", data.getInt(key + ".today"));
-					data.set(key + ".today", 0);
+					data.set(key + ".TwoDays", data.getInt(key + ".Yesterday"));
+					data.set(key + ".Yesterday", data.getInt(key + ".Today"));
+					data.set(key + ".Today", 0);
 
 					try
 					{
@@ -71,8 +72,9 @@ public class SaveData
 				if (!section.contains(key))
 				{
 					ConfigurationSection itemDataSection = data.createSection(key);
-					itemDataSection.set("before", 0);
-					itemDataSection.set("today", 0);
+					itemDataSection.set("TwoDays", 0);
+					itemDataSection.set("Yesterday", 0);
+					itemDataSection.set("Today", 0);
 
 					try
 					{

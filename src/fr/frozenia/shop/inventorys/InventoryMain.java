@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -93,15 +92,6 @@ public class InventoryMain implements Listener
 			PlayerManager.getInstance().setMenu(map_menus.get(event.getSlot()));
 			
 			player.sendMessage(Shop.prefix + "§7Le shop §b" + map_menus.get(event.getSlot()) + " §7est désactiver");
-		}
-	}
-	
-	@EventHandler
-	public void onCloseInventory(InventoryCloseEvent event)
-	{
-		if (event.getView().getTitle().equals(PlayerManager.getInstance().getMenuPrevious()))
-		{
-			PlayerManager.getInstance().clearInventoryPrevious();
 		}
 	}
 }
