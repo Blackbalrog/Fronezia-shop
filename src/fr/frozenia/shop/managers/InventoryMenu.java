@@ -23,6 +23,7 @@ import fr.frozenia.shop.inventorys.InventoryVendor;
 import fr.frozenia.shop.utils.Calcul;
 import fr.frozenia.shop.utils.Utils;
 
+@SuppressWarnings("unused")
 public class InventoryMenu implements Listener
 {
 
@@ -31,7 +32,7 @@ public class InventoryMenu implements Listener
 
 	private Inventory inventaire;
 	private int page = 1;
-	private int pages;
+	private int pages = 0;
 	
 	private PlayerManager playerManager;
 
@@ -54,12 +55,12 @@ public class InventoryMenu implements Listener
 		this.playerManager.setMenuPrevious(title);
 		this.playerManager.setMenu(title);
 
+		ConfigurationSection section = this.configurationManager.getConfigurationSection("Items");
+		for (String page : section.getKeys(false)) pages++;
+		
 		ConfigurationSection section_page = this.configurationManager.getConfigurationSection("Items.page_" + this.page);
-
 		for (String key : section_page.getKeys(false))
 		{
-			pages = pages +1;
-
 			Material material = Material.valueOf(section_page.getString(key + ".material"));
 
 			short nbt = (short) section_page.getInt(key + ".nbt");
@@ -97,25 +98,25 @@ public class InventoryMenu implements Listener
 			item.setItemMeta(itemMeta);
 			this.inventaire.setItem(section_page.getInt(key + ".slot"), item);
 		}
-
+		
 		if (this.page == 1)
 		{
 			this.inventaire.setItem(46, null);
 		}
 		else
 		{
-			this.inventaire.setItem(46, new Utils().PageBefore(this.page));
+			this.inventaire.setItem(46, new Utils().PageBefore(this.page-1));
 		}
 
 		this.inventaire.setItem(49, new Utils().Retour());
-
+		
 		if (this.page == this.pages)
 		{
 			this.inventaire.setItem(52, null);
 		}
 		else
 		{
-			this.inventaire.setItem(52, new Utils().PageAfter(this.page + 1));
+			this.inventaire.setItem(52, new Utils().PageAfter(this.page+1));
 		}
 
 		player.openInventory(this.inventaire);
@@ -148,18 +149,20 @@ public class InventoryMenu implements Listener
 				inventoryManager.openInventory(player);
 			}
 
-			if (event.getSlot() == 46 && this.page > 1)
+			if (event.getSlot() == 46)
 			{
+				if (this.page == 1) return;
 				this.page = this.page - 1;
 				this.openInventory(player);
 			}
 
-			if (event.getSlot() == 52 && this.page < this.pages)
+			if (event.getSlot() == 52)
 			{
+				if (this.page == this.pages) return;
 				this.page = this.page + 1;
 				this.openInventory(player);
 			}
-
+			
 			if (map_Items.get(event.getSlot()) == null) return;
 
 			PlayerManager.getInstance().setKey(map_Items.get(event.getSlot()));
