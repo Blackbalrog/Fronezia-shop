@@ -164,7 +164,7 @@ public class InventoryMenu implements Listener
 				this.openInventory(player);
 			}
 			
-			if (map_Items.get(event.getSlot()) == null) return;
+			if (map_Items.get(event.getSlot()) == null || map_Items.get(event.getSlot()).equals("Page " + page)) return;
 
 			PlayerManager.getInstance().setKey(map_Items.get(event.getSlot()));
 			PlayerManager.getInstance().setSectionConfiguration(sectionItem.getConfigurationSection(map_Items.get(event.getSlot())));
