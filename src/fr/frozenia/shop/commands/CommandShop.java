@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import fr.frozenia.shop.Shop;
-import fr.frozenia.shop.managers.InventoryManager;
+import fr.frozenia.shop.managers.InventoryMain;
 
 public class CommandShop implements CommandExecutor
 {
@@ -34,7 +34,7 @@ public class CommandShop implements CommandExecutor
 		{
 			if (args.length == 0)
 			{
-				InventoryManager inventoryManager = new InventoryManager(this.instance, "InventoryRoot.yml");
+				InventoryMain inventoryManager = new InventoryMain(this.instance, "InventoryRoot.yml");
 				inventoryManager.openInventory(player);
 				return true;
 			}

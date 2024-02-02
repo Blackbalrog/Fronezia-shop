@@ -53,4 +53,22 @@ public class Utils
 		retour.setItemMeta(metaRetour);
 		return retour;
 	}
+
+	public ItemStack PageBefore(int page)
+	{
+		ItemStack before = new ItemStack(Material.ARROW);
+		ItemMeta metaBefore = before.getItemMeta();
+		metaBefore.setDisplayName("§fPage " + page);
+		before.setItemMeta(metaBefore);
+		return before;
+	}
+
+	public ItemStack PageAfter(int page)
+	{
+		ItemStack after = new ItemStack(Material.ARROW);
+		ItemMeta metaAfter = after.getItemMeta();
+		metaAfter.setDisplayName("§fPage " + page);
+		after.setItemMeta(metaAfter);
+		return after;
+	}
 }

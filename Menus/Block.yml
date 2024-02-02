@@ -1,23 +1,32 @@
 size: 54
 
 Items:
+  page_1:
+    terre:
+      material: GRASS
+      name: "&aBlock d'herbe"
+      slot: 0
+      buy: 50.0
+      sell: 1.0
+      dynamique:
+        max_prix: 5000
+        min_prix: 1
 
-  terre:
-    material: GRASS
-    name: "&aBlock d'herbe"
-    slot: 0
-    buy: 50.0
-    sell: 1.0
-    dynamique:
-      max_prix: 5000
-      min_prix: 1
-
-  cobblestone:
-    material: COBBLESTONE
-    name: "&fPierre"
-    slot: 1
-    buy: 25.0
-    sell: 1.0
-    dynamique:
-      max_prix: 10000
-      min_prix: 1
+    cobblestone:
+      material: COBBLESTONE
+      name: "&fPierre"
+      slot: 1
+      buy: 25.0
+      sell: 1.0
+      dynamique:
+        max_prix: 10000
+        min_prix: 1
+        
+  page_2:
+    log:
+      material: LOG
+      name: "&fBois"
+      slot: 0
+      buy: 10
+      sell: 2.0
+    

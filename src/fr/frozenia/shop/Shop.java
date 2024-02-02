@@ -9,7 +9,8 @@ import fr.frozenia.shop.commands.CommandShop;
 import fr.frozenia.shop.configurtation.ConfigurationManager;
 import fr.frozenia.shop.data.SaveData;
 import fr.frozenia.shop.inventorys.InventoryVendor;
-import fr.frozenia.shop.managers.InventoryManager;
+import fr.frozenia.shop.managers.InventoryMain;
+import fr.frozenia.shop.managers.InventoryMenu;
 import net.milkbowl.vault.economy.Economy;
 
 public class Shop extends JavaPlugin
@@ -54,7 +55,8 @@ public class Shop extends JavaPlugin
 	{
 		PluginManager pluginManager = Bukkit.getPluginManager();
 
-		pluginManager.registerEvents(new InventoryManager(this, "InventoryRoot.yml"), this);
+		pluginManager.registerEvents(new InventoryMain(this, "InventoryRoot.yml"), this);
+		pluginManager.registerEvents(new InventoryMenu(this, "Menus/Block.yml"), this);
 		pluginManager.registerEvents(new InventoryVendor(this), this);
 	}
 
