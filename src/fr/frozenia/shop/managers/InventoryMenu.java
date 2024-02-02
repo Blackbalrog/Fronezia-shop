@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import fr.frozenia.shop.Shop;
 import fr.frozenia.shop.configurtation.ConfigurationManager;
+import fr.frozenia.shop.inventorys.InventoryMain;
 import fr.frozenia.shop.inventorys.InventoryVendor;
 import fr.frozenia.shop.utils.Calcul;
 import fr.frozenia.shop.utils.Utils;
@@ -137,7 +138,7 @@ public class InventoryMenu implements Listener
 			Player player = (Player) event.getWhoClicked();
 
 			ConfigurationManager configurationItem = new ConfigurationManager(instance, "Menus/" + PlayerManager.getInstance().getMenu() + ".yml");
-			ConfigurationSection sectionItem = configurationItem.getConfigurationSection("Items");
+			ConfigurationSection sectionItem = configurationItem.getConfigurationSection("Items.page_" + this.page);
 			for (String key : sectionItem.getKeys(false))
 			{
 				map_Items.put(sectionItem.getInt(key + ".slot"), key);
@@ -166,7 +167,8 @@ public class InventoryMenu implements Listener
 			if (map_Items.get(event.getSlot()) == null) return;
 
 			PlayerManager.getInstance().setKey(map_Items.get(event.getSlot()));
-
+			PlayerManager.getInstance().setSectionConfiguration(sectionItem.getConfigurationSection(map_Items.get(event.getSlot())));
+			
 			InventoryVendor vendor = new InventoryVendor(instance);
 			vendor.openInventory(player, clickedItem);
 		}

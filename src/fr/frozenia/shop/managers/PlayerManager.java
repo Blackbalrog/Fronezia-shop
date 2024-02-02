@@ -2,6 +2,7 @@ package fr.frozenia.shop.managers;
 
 import java.util.HashMap;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 public class PlayerManager
@@ -13,6 +14,7 @@ public class PlayerManager
 	private static Player PLAYER;
 	private String key;
 	private String menu;
+	private ConfigurationSection sectionItem;
 	
 	public PlayerManager(Player player)
 	{
@@ -63,5 +65,15 @@ public class PlayerManager
 	public static PlayerManager getInstance()
 	{
 		return manager.get(PLAYER);
+	}
+
+	public void setSectionConfiguration(ConfigurationSection sectionItem)
+	{
+		this.sectionItem = sectionItem;
+	}
+	
+	public ConfigurationSection getSectionItem()
+	{
+		return this.sectionItem;
 	}
 }

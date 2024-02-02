@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import fr.frozenia.shop.Shop;
-import fr.frozenia.shop.managers.InventoryMain;
+import fr.frozenia.shop.inventorys.InventoryMain;
 
 public class CommandShop implements CommandExecutor
 {

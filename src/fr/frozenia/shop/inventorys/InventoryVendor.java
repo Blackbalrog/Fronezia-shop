@@ -36,6 +36,7 @@ public class InventoryVendor implements Listener
 	private static int nombreItem = 1;
 	//update price
 	private volatile String KEY;
+	private ConfigurationSection sectionItem;
 	
 	private File fileData;
 	private FileConfiguration data;
@@ -53,9 +54,6 @@ public class InventoryVendor implements Listener
 		SaveData saveData = new SaveData(this.instance);
 		saveData.createData();
 		
-		File file = new File(instance.getDataFolder(), "Menus/" + PlayerManager.getInstance().getMenu() + ".yml");
-		FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-
 		itemRegistered = clickedItem;
 
 		Inventory inventaire = Bukkit.createInventory(null, 54, "Vendeur");
@@ -64,8 +62,9 @@ public class InventoryVendor implements Listener
 		itemMeta.setDisplayName(clickedItem.getItemMeta().getDisplayName());
 
 		KEY = PlayerManager.getInstance().getKey();
-		double buy = calculTotalPrix(configuration, data, KEY, ".buy");
-		double sell = calculTotalPrix(configuration, data, KEY, ".sell");
+		
+		double buy = calculTotalPrix("buy");
+		double sell = calculTotalPrix("sell");
 		
 		itemMeta.setLore(Arrays.asList(new String[] { "§7nombre: §6" + nombreItem, "", "§7Achat: §6" + buy + "$", "§7Vente: §6" + sell + "$" }));
 	
@@ -94,7 +93,6 @@ public class InventoryVendor implements Listener
 		{
 			File file = new File(instance.getDataFolder(), "Menus/" + PlayerManager.getInstance().getMenu() + ".yml");
 			if (!file.exists()) return;
-			FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
 			
 			ItemStack clickedItem = event.getCurrentItem();
 			event.setCancelled(true);
@@ -155,7 +153,7 @@ public class InventoryVendor implements Listener
 							}
 
 							KEY = PlayerManager.getInstance().getKey();
-							double calculTotalPrix = calculTotalPrix(configuration, data, KEY, ".buy") * nombreItem;
+							double calculTotalPrix = calculTotalPrix(".buy") * nombreItem;
 							
 							if (economy.getBalance(player) < calculTotalPrix || economy.getBalance(player) == 0)
 						    {
@@ -192,7 +190,7 @@ public class InventoryVendor implements Listener
 							}
 							
 							KEY = PlayerManager.getInstance().getKey();
-							double calculTotalPrix = calculTotalPrix(configuration, data, KEY, ".sell") * nombreItem;
+							double calculTotalPrix = calculTotalPrix("sell") * nombreItem;
 
 							economy.depositPlayer(player, calculTotalPrix);
 							player.getInventory().removeItem(new ItemStack(itemRegistered.getType(), nombreItem));
@@ -226,7 +224,7 @@ public class InventoryVendor implements Listener
 								}
 								
 								KEY = PlayerManager.getInstance().getKey();
-								double calculTotalPrix = calculTotalPrix(configuration, data, KEY, ".sell") * totalQuantity;
+								double calculTotalPrix = calculTotalPrix("sell") * totalQuantity;
 
 								economy.depositPlayer(player, calculTotalPrix);
 								player.getInventory().removeItem(new ItemStack(itemRegistered.getType(), totalQuantity));
@@ -262,8 +260,8 @@ public class InventoryVendor implements Listener
 			meta.setDisplayName(itemRegistered.getItemMeta().getDisplayName());
 			
 			KEY = PlayerManager.getInstance().getKey();
-			double buy = calculTotalPrix(configuration, data, KEY, ".buy");
-			double sell = calculTotalPrix(configuration, data, KEY, ".sell");
+			double buy = calculTotalPrix("buy");
+			double sell = calculTotalPrix("sell");
 
 			meta.setLore(Arrays.asList(new String[] { "§7nombre: §6" + nombreItem, "", "§7Achat: §6" + (buy * nombreItem) + "$", "§7Vente: §6" + (sell * nombreItem) + "$" }));
 			
@@ -277,13 +275,15 @@ public class InventoryVendor implements Listener
 		return player.getInventory().firstEmpty() == -1 ? true : false;
 	}
 	
-	public double calculTotalPrix(FileConfiguration configuration, FileConfiguration data, String key, String vendor)
+	public double calculTotalPrix(String vendor)
 	{
-		ConfigurationSection section = configuration.getConfigurationSection("Items");
-		double max_prix = section.getDouble(key + ".dynamique.max_prix");
-		double min_prix = section.getDouble(key + ".dynamique.min_prix");
+		KEY = PlayerManager.getInstance().getKey();
+		sectionItem = PlayerManager.getInstance().getSectionItem();
 		
-		double value = Calcul.setNewPrix(section.getDouble(key + vendor), data.getInt(key + ".today"), data.getInt(key + ".before"), min_prix, max_prix);
+		double max_prix = sectionItem.getDouble("dynamique.max_prix");
+		double min_prix = sectionItem.getDouble("dynamique.min_prix");
+		
+		double value = Calcul.setNewPrix(sectionItem.getDouble(vendor), this.data.getInt(KEY + ".today"), this.data.getInt(KEY + ".before"), min_prix, max_prix);
 		
 		DecimalFormat decimalFormat = new DecimalFormat("##.##");
 	    String formattedValue = decimalFormat.format(value);

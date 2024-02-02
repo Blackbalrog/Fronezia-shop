@@ -8,8 +8,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import fr.frozenia.shop.commands.CommandShop;
 import fr.frozenia.shop.configurtation.ConfigurationManager;
 import fr.frozenia.shop.data.SaveData;
+import fr.frozenia.shop.inventorys.InventoryMain;
 import fr.frozenia.shop.inventorys.InventoryVendor;
-import fr.frozenia.shop.managers.InventoryMain;
 import fr.frozenia.shop.managers.InventoryMenu;
 import net.milkbowl.vault.economy.Economy;
 
